@@ -1,0 +1,26 @@
+float charX=300, charY=200, s=10;
+float char2X=100, char2Y=300, s2=20;
+float speedX=8, speedY=7;
+void setup(){
+  size(600,400);
+}
+
+void draw() {
+  background(255,255,255);
+  drawChar(charX, charY, s);
+  charX+=speedX;
+  charY+=speedY;
+  
+  
+  if(charX > width || charX < 0) speedX = -speedX;
+  if(charY > height || charY < 0) speedY = -speedY;
+}
+
+void drawChar(float x, float y, float s) {
+  circle(x-5*s,y-0.5*s,2*s);
+  circle(x+5*s,y-s,2*s);
+  circle(x,y,10*s);
+  circle(x-2*s,y-s,3*s);
+  circle(x+2*s,y-s,3*s);
+  arc(x,y+2*s,3*s,3*s,0,PI);
+}
