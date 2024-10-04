@@ -1,1 +1,23 @@
-
+float x,y,s;
+void setup(){
+  size(600,400);
+  x = 200;
+  y = 200;
+  s = 10;
+  circle(x-5*s,y-0.5*s,2*s);
+  circle(x+5*s,y-s,2*s);
+  circle(x,y,10*s);
+  circle(x-2*s,y-s,3*s);
+  circle(x+2*s,y-s,3*s);
+  arc(x,y+2*s,3*s,3*s,0,PI);
+  
+  x = 400;
+  y = 150;
+  s = 20;
+  circle(x-5*s,y-0.5*s,2*s);
+  circle(x+5*s,y-s,2*s);
+  circle(x,y,10*s);
+  circle(x-2*s,y-s,3*s);
+  circle(x+2*s,y-s,3*s);
+  arc(x,y+2*s,3*s,3*s,0,PI);
+}
