@@ -1,0 +1,11 @@
+void smile(float x, float y, int option){
+  if(option == 1) fill(255,0,255);
+  else fill(255);
+  circle(x-50,y-0.50,20);
+  circle(x+50,y-10,20);
+  circle(x,y,100);
+  circle(x-20,y-10,30);
+  circle(x+20,y-10,30);
+  arc(x,y+20,30,30,0,PI);
+  fill(255); // return to default
+}
