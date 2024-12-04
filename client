@@ -1,0 +1,69 @@
+import processing.net.*;
+
+Client client;
+float clientX, clientY; // 클라이언트 캐릭터 위치
+float serverX, serverY; // 서버 캐릭터 위치
+String input = "";
+boolean initialized = false; // 초기 위치 수신 여부
+
+void setup() {
+  size(450, 450);
+  client = new Client(this, "127.0.0.1", 12345); // 서버에 연결
+  println("Connecting to server...");
+}
+
+void draw() {
+  background(50, 150, 200);
+
+  // 서버 연결 확인
+  if (!initialized && client.active()) {
+    println("Connected to server"); // 연결 시 메시지 출력
+    initialized = true;
+  }
+
+  // 서버 데이터 수신
+  if (client.available() > 0) {
+    input = client.readString();
+    if (input != null) {
+      String[] coords = split(input.trim(), ",");
+      if (coords.length == 2) {
+        if (!initialized) {
+          // 초기 위치 설정
+          clientX = float(coords[0]);
+          clientY = float(coords[1]);
+          initialized = true;
+          println("Initialized client position: " + clientX + "," + clientY);
+        } else {
+          // 서버 위치 업데이트
+          serverX = float(coords[0]);
+          serverY = float(coords[1]);
+        }
+      }
+    }
+  }
+
+  // 클라이언트 캐릭터 표시 (빨간색)
+  fill(255, 0, 0);
+  ellipse(clientX, clientY, 40, 40);
+
+  // 서버 캐릭터 표시 (파란색)
+  fill(0, 0, 255);
+  ellipse(serverX, serverY, 40, 40);
+
+  // 자신의 위치 전송
+  if (initialized) {
+    client.write(clientX + "," + clientY + "\n");
+  }
+}
+
+void keyPressed() {
+  if (initialized) {
+    if (keyCode == UP) clientY -= 5;
+    if (keyCode == DOWN) clientY += 5;
+    if (keyCode == LEFT) clientX -= 5;
+    if (keyCode == RIGHT) clientX += 5;
+
+    clientX = constrain(clientX, 0, width);
+    clientY = constrain(clientY, 0, height);
+  }
+}
