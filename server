@@ -1,0 +1,72 @@
+import processing.net.*;
+
+Server server;
+Client client;
+float serverX, serverY; // 서버 캐릭터 위치
+float clientX, clientY; // 클라이언트 캐릭터 위치
+String input = "";
+boolean initialized = false; // 클라이언트 초기화 여부
+boolean clientConnected = false; // 클라이언트 연결 여부
+
+void setup() {
+  size(450, 450);
+  server = new Server(this, 12345); // 서버 포트 설정
+  serverX = width / 2; // 서버 캐릭터 초기 위치
+  serverY = height / 2;
+  println("Server started on port 12345");
+}
+
+void draw() {
+  background(50, 150, 200);
+
+  // 클라이언트 연결 확인
+  if (!clientConnected) {
+    client = server.available();
+    if (client != null) {
+      clientConnected = true;
+      println("Server connected"); // 연결 시 메시지 출력
+    }
+  }
+
+  // 서버 캐릭터 표시 (파란색)
+  fill(0, 0, 255);
+  ellipse(serverX, serverY, 40, 40);
+
+  // 클라이언트 캐릭터 표시 (빨간색)
+  fill(255, 0, 0);
+  ellipse(clientX, clientY, 40, 40);
+
+  // 클라이언트 데이터 수신
+  if (client != null && client.available() > 0) {
+    input = client.readString();
+    if (input != null) {
+      String[] coords = split(input.trim(), ",");
+      if (coords.length == 2) {
+        clientX = float(coords[0]);
+        clientY = float(coords[1]);
+      }
+    }
+  }
+
+  // 초기 위치 전송 (한 번만 전송)
+  if (client != null && clientConnected && !initialized) {
+    client.write(serverX + "," + serverY + "\n");
+    initialized = true;
+    println("Sent initial position to client: " + serverX + "," + serverY);
+  }
+
+  // 실시간 위치 전송
+  if (client != null && clientConnected) {
+    client.write(serverX + "," + serverY + "\n");
+  }
+}
+
+void keyPressed() {
+  if (key == 'w') serverY -= 5;
+  if (key == 's') serverY += 5;
+  if (key == 'a') serverX -= 5;
+  if (key == 'd') serverX += 5;
+
+  serverX = constrain(serverX, 0, width);
+  serverY = constrain(serverY, 0, height);
+}
